@@ -38,7 +38,7 @@ echo "Using $SLURM_CPUS_ON_NODE CPUs on node $SLURMD_NODENAME"
 set -e  # Exit on any error
 
 echo "Starting agents processing..."
-srun python3 process_agents_mpi2.py > process_agents.out 2> process_agents.err
+srun python3 process_agents.py > process_agents.out 2> process_agents.err
 if [ ! -f "agents_data.csv" ]; then
     echo "Error: agents_data.csv not found. Stopping execution."
     exit 1
@@ -46,15 +46,15 @@ fi
 echo "Agents processing completed!"
 
 echo "Generating PNG files for agents..."
-srun python3 make_png_agents_mpi.py > make_png_agents.out 2> make_png_agents.err
+srun python3 make_png_agents.py > make_png_agents.out 2> make_png_agents.err
 echo "PNG files for agents generated!"
 
 echo "Creating video from agents PNG files..."
-python3 make_video_agents_mpi.py > make_video_agents.out 2> make_video_agents.err
+python3 make_video_agents.py > make_video_agents.out 2> make_video_agents.err
 echo "Video for agents created!"
 
 echo "Starting links processing..."
-srun python3 process_links_mpi2.py > process_links.out 2> process_links.err
+srun python3 process_links.py > process_links.out 2> process_links.err
 if [ ! -f "links_data.csv" ]; then
     echo "Error: links_data.csv not found. Stopping execution."
     exit 1
@@ -62,7 +62,7 @@ fi
 echo "Links processing completed!"
 
 echo "Generating PNG files for links..."
-srun python3 make_png_links_mpi.py > make_png_links.out 2> make_png_links.err
+srun python3 make_png_links.py > make_png_links.out 2> make_png_links.err
 echo "PNG files for links generated!"
 
 echo "Creating video from links PNG files..."
