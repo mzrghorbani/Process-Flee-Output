@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --nodes=4
-#SBATCH --tasks-per-node=256
+#SBATCH --nodes=2
+#SBATCH --tasks-per-node=128
 #SBATCH --cpus-per-task=1
 #SBATCH --time=23:59:59
 #SBATCH --account=e723-brunel
@@ -18,55 +18,49 @@ echo "Tasks per Node: $SLURM_NTASKS_PER_NODE"
 echo "CPUs per Task: $SLURM_CPUS_PER_TASK"
 echo "Total Tasks: $SLURM_NTASKS"
 
+# Set the number of threads to 1
+export OMP_NUM_THREADS=1
+
 module load cray-python
 
 export PYTHONUSERBASE=/work/e723/e723/mzr123/.local
 export PATH=$PYTHONUSERBASE/bin:$PATH
 export PYTHONPATH=$PYTHONUSERBASE/lib/python3.8/site-packages:$PYTHONPATH
-export SLURM_CPU_FREQ_REQ=2250000
-export ENV_DIR=/work/e723/e723/mzr123/VirtualEnv
 
 # Navigate to flee output directory
-cd /work/e723/e723/mzr123/FabSim/results/nigeria2024_archer2_128
+OUTPUT_DIR="/work/e723/e723/mzr123/FabSim/results/nigeria2024_archer2_256"
+
+if [ -d "$OUTPUT_DIR" ]; then
+    cd "$OUTPUT_DIR"
+else
+    echo "Error: Directory $OUTPUT_DIR does not exist. Exiting..."
+    exit 1
+fi
 
 # Log start of the process
 echo "Starting process at $(date)..."
 echo "Using $SLURM_CPUS_ON_NODE CPUs on node $SLURMD_NODENAME"
 
-#!/bin/bash
+# Exit immediately on any error
+set -e
 
-set -e  # Exit on any error
-
+# Check for errors during agents processing
 echo "Starting agents processing..."
-srun python3 process_agents.py > process_agents.out 2> process_agents.err
-if [ ! -f "agents_data.csv" ]; then
-    echo "Error: agents_data.csv not found. Stopping execution."
+srun --distribution=block:block --hint=nomultithread python3 process_agents_pngs.py > process_agents_pngs.out 2> process_agents_pngs.err
+if [ $? -ne 0 ]; then
+    echo "Error: Agents processing failed. Check process_agents_pngs.err for details. Exiting..."
     exit 1
 fi
-echo "Agents processing completed!"
+echo "Agents processing completed successfully!"
 
-echo "Generating PNG files for agents..."
-srun python3 make_png_agents.py > make_png_agents.out 2> make_png_agents.err
-echo "PNG files for agents generated!"
-
-echo "Creating video from agents PNG files..."
-python3 make_video_agents.py > make_video_agents.out 2> make_video_agents.err
-echo "Video for agents created!"
-
+# Check for errors during links processing
 echo "Starting links processing..."
-srun python3 process_links.py > process_links.out 2> process_links.err
-if [ ! -f "links_data.csv" ]; then
-    echo "Error: links_data.csv not found. Stopping execution."
+srun --distribution=block:block --hint=nomultithread python3 process_links_pngs.py > process_links_pngs.out 2> process_links_pngs.err
+if [ $? -ne 0 ]; then
+    echo "Error: Links processing failed. Check process_links_pngs.err for details. Exiting..."
     exit 1
 fi
-echo "Links processing completed!"
-
-echo "Generating PNG files for links..."
-srun python3 make_png_links.py > make_png_links.out 2> make_png_links.err
-echo "PNG files for links generated!"
-
-echo "Creating video from links PNG files..."
-python3 make_video_links.py > make_video_links.out 2> make_video_links.err
-echo "Video for links created!"
+echo "Links processing completed successfully!"
 
 echo "All processes completed successfully!"
+

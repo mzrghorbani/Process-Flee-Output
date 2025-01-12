@@ -5,6 +5,9 @@ from moviepy.editor import ImageSequenceClip
 
 if __name__ == "__main__":
 
+    # Change directory
+    os.chdir("output_agents_pngs")
+
     # Specify the pattern for matching files
     file_pattern = 'agents_timestep_*.png'
 
@@ -19,6 +22,6 @@ if __name__ == "__main__":
 
     clip.write_videofile("agent_movements_animation.mp4", codec="libx264")
 
-    print("Agents video created!")
+    print("Agents video created!", flush=True)
 
 

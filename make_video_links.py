@@ -5,6 +5,9 @@ from moviepy.editor import ImageSequenceClip
 
 if __name__ == "__main__":
 
+    # Change directory
+    os.chdir("output_links_pngs")
+
     # Specify the pattern for matching files
     file_pattern = 'links_timestep_*.png'
 
@@ -19,6 +22,6 @@ if __name__ == "__main__":
 
     clip.write_videofile("link_movements_animation.mp4", codec="libx264")
 
-    print("Links video created!")
+    print("Links video created!", flush=True)
 
 
