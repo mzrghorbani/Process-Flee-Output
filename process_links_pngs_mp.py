@@ -126,7 +126,15 @@ if __name__ == "__main__":
         print(f"Found {len(file_list)} files and {num_workers} workers to process.")
         
         with Pool(processes=num_workers) as pool:
-            pool.map(process_and_plot, file_list)
+            try:
+                # Map the processing function across files
+                pool.map(process_and_plot, file_list)
+            except Exception as e:
+                print(f"Error occurred during multiprocessing: {e}", flush=True)
+            finally:
+                # Ensure the pool is closed and joined properly
+                pool.close()
+                pool.join()
 
         print("All files processed and PNGs generated successfully.")
     except Exception as e:

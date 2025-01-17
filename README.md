@@ -141,16 +141,35 @@ For Mac installation:
 brew install ffmpeg
 ```
 
-Or, optionally download and extract binary by visiting the official FFmpeg download page, or for Linux, use a static build from johnvansickle.com.
+If no admin privilege exist, download and extract binary by visiting the official FFmpeg download page, or for Linux, use a static build from johnvansickle.com.
 
 ```bash
-tar xvf ffmpeg-release-*.tar.xz
+wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
 ```
 
-Add ffmpeg to your PATH:
+Extract files:
 
 ```bash
-export PATH=$PATH:/path/to/ffmpeg/bin
+tar -xvf ffmpeg-release-amd64-static.tar.xz
+```
+
+Test the installation:
+
+```bash
+/path/to/ffmpeg-7.0.2-amd64-static/ffmpeg -version
+```
+
+Output:
+
+```bash
+ffmpeg version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2024 the FFmpeg developers
+built with gcc 8 (Debian 8.3.0-6)
+```
+
+Add ffmpeg to your PATH, optionally:
+
+```bash
+export PATH=$PATH:/path/to/ffmpeg-7.0.2-amd64-static/ffmpeg
 ```
 
 **Description**: The ffmpeg tool overlays the two videos (agents_video.mp4 and links_video.mp4) to create a combined video showing both agents and links simultaneously.
