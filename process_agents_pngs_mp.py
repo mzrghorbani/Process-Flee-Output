@@ -125,7 +125,7 @@ def process_and_plot(file):
 if __name__ == "__main__":
     try:
         # Create output directory for PNGs
-        output_dir = "."
+        output_dir = "./output_agents_pngs"
         os.makedirs(output_dir, exist_ok=True)
 
         # Gather all log files
