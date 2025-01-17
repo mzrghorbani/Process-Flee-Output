@@ -50,7 +50,7 @@ Here's how MPI parallelization is implemented:
 **Script**: process_agents_and_png.py
 **Description**: This script processes the agents.out.* files incrementally to extract data for each time step and generate PNG visualizations of agents' movements.
 
-**Execution**: Add the following to your SLURM job script (run.slurm)
+**Execution**: Add the following to your SLURM job script (e.g., run.slurm)
 
 ```bash
 srun --distribution=block:block --hint=nomultithread python3 process_agents_pngs.py
@@ -64,7 +64,7 @@ Processed PNGs stored in current directory (e.g., agents_timestep_000.png, agent
 **Script**: process_links_and_png.py
 **Description**: This script processes the links.out.* files incrementally to extract data for each time step and generate PNG visualizations of agent routes (links) between locations.
 
-**Execution**: Add the following to your SLURM job script (run.slurm):
+**Execution**: Add the following to your SLURM job script (e.g., run.slurm):
 
 ```bash
 srun --distribution=block:block --hint=nomultithread python3 process_links_pngs.py
@@ -79,6 +79,20 @@ The `run.slurm` script is updated with the necessary steps to create MPI jobs an
 
 ```bash
 sbatch run.slurm
+```
+
+Note: The SLURM jobs will be queued until processed. This could take a long time, therefore, we have create multiprocessing version of MPI implementations which can be executed as Python script.
+
+For creating agents PNGs:
+
+```bash
+python3 process_agents_pngs_mp.py
+```
+
+For creating links PNGs:
+
+```bash
+python3 process_links_pngs_mp.py
 ```
 
 ### Step 3: Generate Videos from PNGs
