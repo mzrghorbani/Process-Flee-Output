@@ -57,7 +57,7 @@ srun --distribution=block:block --hint=nomultithread python3 process_agents_pngs
 ```
 
 **Output**:
-Processed PNGs stored in output_agents_pngs/ directory (e.g., agents_timestep_000.png, agents_timestep_001.png, etc.).
+Processed PNGs stored in current directory (e.g., agents_timestep_000.png, agents_timestep_001.png, etc.).
 
 ### Step 2: Process Links Logs and Create PNG Files
 
@@ -71,7 +71,7 @@ srun --distribution=block:block --hint=nomultithread python3 process_links_pngs.
 ```
 
 **Output**:
-Processed PNGs stored in output_links_pngs/ directory (e.g., links_timestep_000.png, links_timestep_001.png, etc.).
+Processed PNGs stored in current directory (e.g., links_timestep_000.png, links_timestep_001.png, etc.).
 
 ### SLURM Job Submission
 
@@ -127,6 +127,18 @@ For Mac installation:
 brew install ffmpeg
 ```
 
+Or, optionally download and extract binary by visiting the official FFmpeg download page, or for Linux, use a static build from johnvansickle.com.
+
+```bash
+tar xvf ffmpeg-release-*.tar.xz
+```
+
+Add ffmpeg to your PATH:
+
+```bash
+export PATH=$PATH:/path/to/ffmpeg/bin
+```
+
 **Description**: The ffmpeg tool overlays the two videos (agents_video.mp4 and links_video.mp4) to create a combined video showing both agents and links simultaneously.
 
 **Execution**: Run the following command in your terminal:
@@ -134,8 +146,8 @@ brew install ffmpeg
 #### Resize videos
 
 ```bash
-ffmpeg -i output_agents_pngs/agent_movements_animation.mp4 -vf "scale=1280:720" agents_resized.mp4
-ffmpeg -i output_links_pngs/link_movements_animation.mp4 -vf "scale=1280:720" links_resized.mp4
+ffmpeg -i agent_movements_animation.mp4 -vf "scale=1280:720" agents_resized.mp4
+ffmpeg -i link_movements_animation.mp4 -vf "scale=1280:720" links_resized.mp4
 ```
 
 #### Overlay videos

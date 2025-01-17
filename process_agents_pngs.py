@@ -5,12 +5,12 @@ import os
 import re
 import traceback
 
-os.environ["MPLCONFIGDIR"] = "/work/e723/e723/mzr123/matplotlib_config"
+# os.environ["MPLCONFIGDIR"] = "/work/e723/e723/mzr123/matplotlib_config"
 
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 
-# MPI setup
+# Initialize MPI
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
@@ -98,6 +98,13 @@ def plot_timestep(timestep, agents_data, output_dir):
 
 if __name__ == "__main__":
     try:
+        # Create output directory for PNGs, optionally
+        output_dir = "."
+        if rank == 0:
+            os.makedirs(output_dir, exist_ok=True)
+
+        comm.Barrier()
+        
         # Master rank gathers the file list
         if rank == 0:
             file_list = sorted(glob.glob('agents.out.*'), key=lambda x: int(x.split('.')[-1]))
@@ -121,13 +128,6 @@ if __name__ == "__main__":
 
         assigned_files = file_list[start_idx:end_idx]
         print(f"Rank {rank}: Assigned {len(assigned_files)} files.", flush=True)
-
-        # Create output directory for PNGs
-        output_dir = "output_agents_pngs"
-        if rank == 0:
-            os.makedirs(output_dir, exist_ok=True)
-
-        comm.Barrier()
 
         # Process assigned files and generate PNGs
         for file in assigned_files:

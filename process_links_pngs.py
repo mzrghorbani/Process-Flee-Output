@@ -4,7 +4,7 @@ import glob
 import os
 import traceback
 
-os.environ["MPLCONFIGDIR"] = "/work/e723/e723/mzr123/matplotlib_config"
+# os.environ["MPLCONFIGDIR"] = "/work/e723/e723/mzr123/matplotlib_config"
 
 import matplotlib.pyplot as plt
 from matplotlib import colors
@@ -22,6 +22,10 @@ def process_file(file):
     try:
         df = pd.read_csv(file, index_col=False)
         df.index.name = 'Index'
+        
+        # Drop rows with NaN values
+        df = df.dropna()
+        
         return df
     except pd.errors.EmptyDataError:
         print(f"Rank {rank}: Skipping empty file: {file}", flush=True)
@@ -75,8 +79,8 @@ def plot_timestep(timestep, links_data, output_dir):
 
 if __name__ == "__main__":
     try:
-        # Create output directory for PNGs
-        output_dir = "output_links_pngs"
+        # Create output directory for PNGs, optionally
+        output_dir = "."
         if rank == 0:
             os.makedirs(output_dir, exist_ok=True)
 
@@ -129,9 +133,6 @@ if __name__ == "__main__":
                     on='end_location',
                     how='left'
                 )
-
-                # Drop rows with NaN values
-                df = df.dropna()
 
                 # Sort data by time
                 df = df.sort_values(by=['#time'])

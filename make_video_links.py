@@ -5,9 +5,6 @@ from moviepy.editor import ImageSequenceClip
 
 if __name__ == "__main__":
 
-    # Change directory
-    os.chdir("output_links_pngs")
-
     # Specify the pattern for matching files
     file_pattern = 'links_timestep_*.png'
 
