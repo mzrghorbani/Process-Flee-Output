@@ -31,12 +31,20 @@ def clean_location(x):
 
 def plot_timestep(timestep, agents_data, output_dir):
     try:
+        # Initialize the plot
         plt.figure(figsize=(12, 8))
         m = Basemap(projection='merc', llcrnrlat=4, urcrnrlat=14, llcrnrlon=2, urcrnrlon=15, resolution='i')
         m.drawcountries()
         m.drawcoastlines()
 
-        original_locations = agents_data[agents_data['#time'] == timestep]
+        # Filter data for the current timestep
+        timestep_data = agents_data[agents_data['#time'] == timestep]
+        
+        # Separate original and current locations
+        original_locations = timestep_data[['gps_x0', 'gps_y0']]
+        current_locations = timestep_data[['gps_x', 'gps_y', 'current_location']]
+
+        # Plot original locations
         m.scatter(
             original_locations['gps_x0'].values,
             original_locations['gps_y0'].values,
@@ -45,11 +53,21 @@ def plot_timestep(timestep, agents_data, output_dir):
             color='red',
             label='Original Locations',
             s=90,
-            alpha=0.7,
-            zorder=3
+            alpha=0.8,
+            zorder=2
         )
 
-        current_locations = agents_data[agents_data['#time'] == timestep]
+        # Calculate marker sizes for current locations
+        current_location_counts = timestep_data['current_location'].value_counts()
+        marker_sizes = current_locations['current_location'].map(current_location_counts)
+
+        # Define scaling parameters
+        min_size, max_size = 50, 500  # Define size limits
+
+        # Scale marker sizes and adjust colors for high counts
+        marker_sizes_scaled = marker_sizes.clip(lower=min_size, upper=max_size)
+
+        # Plot current locations with adjusted marker sizes and zorder
         m.scatter(
             current_locations['gps_y'].values,
             current_locations['gps_x'].values,
@@ -57,11 +75,12 @@ def plot_timestep(timestep, agents_data, output_dir):
             marker='o',
             color='green',
             label='Current Locations',
-            s=50,
-            alpha=0.3,
-            zorder=2
+            s=marker_sizes_scaled,
+            alpha=0.2,
+            zorder=1
         )
 
+        # Add legend and save the plot
         plt.legend(loc='lower left')
         output_path = os.path.join(output_dir, f"agents_timestep_{timestep:03d}.png")
         plt.savefig(output_path)
